@@ -299,9 +299,6 @@ func FileCat(ctx *App, res http.ResponseWriter, req *http.Request) {
 	if contentLength != -1 {
 		header.Set("Content-Length", fmt.Sprintf("%d", contentLength))
 	}
-	if header.Get("Content-Security-Policy") == "" {
-		header.Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'; font-src data:; script-src-elem 'self'")
-	}
 	if fname := query.Get("name"); fname != "" {
 		header.Set("Content-Disposition", "attachment; filename=\""+fname+"\"")
 	}
