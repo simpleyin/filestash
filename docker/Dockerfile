@@ -1,16 +1,16 @@
 # STEP1: CLONE THE CODE
 FROM alpine:latest as builder_prepare
 WORKDIR /home/
-RUN apk add git && \
-    git clone --depth 1 https://github.com/mickael-kerjean/filestash
+RUN apk add git
+ADD filestash ./filestash
 
 # STEP2: BUILD THE FRONTEND
 FROM node:13-alpine AS builder_frontend
 WORKDIR /home/
 COPY --from=builder_prepare /home/filestash/ ./
-RUN apk add make git && \
-    npm install --silent && \
-    make build_frontend
+RUN apk add make git
+RUN npm install --legacy-peer-deps
+RUN make build_frontend
 
 # STEP3: BUILD THE BACKEND
 FROM golang:1.19-buster AS builder_backend
@@ -28,13 +28,22 @@ FROM debian:stable-slim
 MAINTAINER mickael@kerjean.me
 COPY --from=builder_backend /home/dist/ /app/
 WORKDIR "/app"
+RUN echo '' > /etc/apt/sources.list
+RUN echo 'deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian/ bullseye main non-free contrib' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian-security/ bullseye-security main' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian-security/ bullseye-security main' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib' >> /etc/apt/sources.list
 RUN apt-get update > /dev/null && \
-    apt-get install -y --no-install-recommends apt-utils && \
+    apt-get install -y --no-install-recommends apt-utils && \ 
     apt-get install -y curl emacs-nox ffmpeg zip poppler-utils > /dev/null && \
     # org-mode: html export
-    curl https://raw.githubusercontent.com/mickael-kerjean/filestash/master/server/.assets/emacs/htmlize.el > /usr/share/emacs/site-lisp/htmlize.el && \
+    curl http://192.168.42.167:8334/files/QGLF_LongIO/htmlize.el > /usr/share/emacs/site-lisp/htmlize.el && \
     # org-mode: markdown export
-    curl https://raw.githubusercontent.com/mickael-kerjean/filestash/master/server/.assets/emacs/ox-gfm.el > /usr/share/emacs/site-lisp/ox-gfm.el && \
+    curl http://192.168.42.167:8334/files/QGLF_LongIO/ox-gfm.el > /usr/share/emacs/site-lisp/ox-gfm.el && \
     # org-mode: pdf export (with a light latex distribution)
     cd && apt-get install -y wget perl > /dev/null && \
     export CTAN_REPO="http://mirror.las.iastate.edu/tex-archive/systems/texlive/tlnet" && \
