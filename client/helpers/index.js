@@ -1,6 +1,7 @@
 export {
     URL_HOME, goToHome, URL_FILES, goToFiles, URL_VIEWER, goToViewer, URL_LOGIN,
     goToLogin, URL_LOGOUT, goToLogout, urlParams, URL_ADMIN, URL_SHARE, URL_TAGS,
+    URL_FILES_CAT
 } from "./navigate";
 export { opener } from "./mimetype";
 export { debounce, throttle } from "./backpressure";

@@ -6,7 +6,7 @@ import {
     NgIf, NgShow, Loader, LoggedInOnly, BreadCrumb, Card, Icon,
     Dropdown, DropdownButton, DropdownList, DropdownItem,
 } from "../components/";
-import { URL_TAGS, URL_FILES, URL_VIEWER, basename, filetype, prompt, notify } from "../helpers/";
+import { URL_TAGS, URL_FILES, URL_VIEWER, basename, filetype, prompt, notify, URL_FILES_CAT } from "../helpers/";
 import { Tags } from "../model/";
 import { t } from "../locales/";
 
@@ -101,6 +101,7 @@ export function TagsPageComponent({ match }) {
     }
 
     const isAFolder = (_path) => (filetype(_path) === "directory");
+    const isHtmlFile = (file) => file.endsWith('.html');
 
     return (
         <div className="component_page_tag">
@@ -173,7 +174,7 @@ export function TagsPageComponent({ match }) {
                                 {
                                     files && files.map((file, idx) => (
                                         <div className="component_thing view-list" key={idx}>
-                                            <Link to={(isAFolder(file) ? URL_FILES : URL_VIEWER) + file}>
+                                            <Link to={(isAFolder(file) ? URL_FILES : (isHtmlFile(file) ? URL_FILES_CAT : URL_VIEWER)) + file}>
                                                 <Card>
                                                     <span className="component_action" style={{float: "right"}} onClick={(e) => { e.preventDefault(); onClickRemoveFile(file)}}>
                                                         <Icon name="close" />

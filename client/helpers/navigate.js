@@ -10,6 +10,11 @@ export function goToFiles(history, path, state) {
     return Promise.resolve("ok");
 }
 
+export const URL_FILES_CAT = "/files/cat?path=";
+export function goToFilesCat(history, path, state) {
+    history.push(URL_FILES_CAT+"?path="+encode_path(path), state);
+    return Promise.resolve("ok");
+}
 
 export const URL_VIEWER = "/view";
 export function goToViewer(history, path, state) {
