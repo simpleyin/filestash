@@ -278,7 +278,7 @@ class ExistingThingComponent extends React.Component {
         }
         className = className.trim();
 
-        const fileLink = this.props.file.link
+        let fileLink = this.props.file.link
             .replace(/%2F/g, "/")
             .replace(/\%/g, "%2525") // Hack to get the Link Component to work
             .replace(/\?/g, "%3F")
@@ -290,12 +290,20 @@ class ExistingThingComponent extends React.Component {
             $box.style.transform = `scale(${scaleNumber})`;
         };
 
+        let isHtml = false;
+        if (fileLink.endsWith('.html')) {
+            fileLink = fileLink.replace('/view', '')
+            fileLink = encodeURIComponent(fileLink)
+            fileLink = '/api/files/cat?path=' + fileLink
+            isHtml = true;
+        }
+
         return connectDragSource(connectDropNativeFile(connectDropFile(
             <div className={"component_thing" + ` view-${this.props.view}`+
                             (this.props.selected === true ? " selected" : " not-selected")}>
                 <ToggleableLink
-                    onClick={this.onThingClick.bind(this)}
-                    to={fileLink + window.location.search}
+                    onClick={isHtml ? () => window.open(fileLink, '_blank') : this.onThingClick.bind(this)}
+                    to={isHtml ? '#' : fileLink + window.location.search}
                     disabled={this.props.file.icon === "loading" || this.state.is_renaming}>
                     <Card
                         className={className + " " + this.state.hover}>

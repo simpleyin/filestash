@@ -174,7 +174,7 @@ export function TagsPageComponent({ match }) {
                                 {
                                     files && files.map((file, idx) => (
                                         <div className="component_thing view-list" key={idx}>
-                                            <Link to={(isAFolder(file) ? URL_FILES : (isHtmlFile(file) ? URL_FILES_CAT : URL_VIEWER)) + file}>
+                                            <Link to={isAFolder(file) ? URL_FILES : URL_VIEWER + file}>
                                                 <Card>
                                                     <span className="component_action" style={{float: "right"}} onClick={(e) => { e.preventDefault(); onClickRemoveFile(file)}}>
                                                         <Icon name="close" />
